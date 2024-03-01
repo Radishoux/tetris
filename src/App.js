@@ -46,20 +46,23 @@ function Tetris() {
     }
   };
 
-  // Add the event listeners when the component mounts
+  // Game loop
   useEffect(() => {
     const interval = setInterval(() => {
-      setPosition(prev => ({ x: prev.x, y: prev.y + 1 }));
+      setPosition(prev => {
+        // If the Tetromino is at the bottom of the board, don't update its position
+        if (prev.y >= board.length - 1) {
+          return prev;
+        }
+
+        // Otherwise, move the Tetromino down
+        return { x: prev.x, y: prev.y + 1 };
+      });
     }, 1000);
 
-    window.addEventListener('keydown', handleKeyPress);
+    return () => clearInterval(interval);
+  }, [board]);
 
-    // Remove the event listeners when the component unmounts
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-      clearInterval(interval);
-    };
-  }, []);
 
   return (
     <div className="board">
